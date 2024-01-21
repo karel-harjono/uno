@@ -5,8 +5,8 @@ export default class ZoneHandler {
       const height = 180;
       let dropZone = scene.add
         .zone(
-          scene.sys.game.config.width / 2,
-          scene.sys.game.config.height / 2,
+          scene.cameras.main.centerX,
+          scene.cameras.main.centerY,
           width,
           height
         )

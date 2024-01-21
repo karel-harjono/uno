@@ -1,8 +1,11 @@
 import Card from "../cards/Card";
 
 export default class Player {
-  constructor(scene) {
+  constructor(scene, x, y, rotate) {
     this.scene = scene;
+    this.x = x || scene.cameras.main.centerX; // Default to centerX if x is not provided
+    this.y = y || scene.cameras.main.height - 200; // Default to a position near the bottom if y is not provided
+    this.rotate = rotate || 0;
     this.cards = [];
     this.cardSpacing = 30; // Spacing between cards
   }
@@ -14,8 +17,16 @@ export default class Player {
       }
     } else {
       const cardX = this.calculateCardX(this.cards.length);
-      const cardY = this.scene.cameras.main.height - 200; // Y position for the cards
-      const card = new Card(this.scene, cardX, cardY, cardData, true);
+      const cardY = this.calculateCardY(this.cards.length); // Y position for the cards
+      const card = new Card(
+        this.scene,
+        this,
+        cardX,
+        cardY,
+        cardData,
+        true,
+        this.rotate
+      );
       this.cards.push(card);
       this.renderCards(); // Adjust positions of all cards
     }
@@ -34,10 +45,12 @@ export default class Player {
   renderCards() {
     this.cards.forEach((card, index) => {
       const targetX = this.calculateCardX(index);
+      const targetY = this.calculateCardY(index);
       card.startingX = targetX; // Update the starting X position of the card
       this.scene.tweens.add({
         targets: card,
         x: targetX,
+        y: targetY,
         duration: 300,
         ease: "Power1",
       });
@@ -48,9 +61,17 @@ export default class Player {
   }
 
   calculateCardX(index) {
-    // Calculate the X position for each card based on its index
+    if (this.rotate === 90 || this.rotate === 270) {
+      return this.x;
+    }
     const totalWidth = this.cards.length * this.cardSpacing;
-    const centerX = this.scene.cameras.main.centerX;
-    return centerX - totalWidth / 2 + index * this.cardSpacing;
+    return this.x - totalWidth / 2 + index * this.cardSpacing;
+  }
+  calculateCardY(index) {
+    if (this.rotate === 180 || this.rotate === 0) {
+      return this.y;
+    }
+    const totalHeight = this.cards.length * this.cardSpacing;
+    return this.y - totalHeight / 2 + index * this.cardSpacing;
   }
 }

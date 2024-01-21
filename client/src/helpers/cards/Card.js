@@ -1,14 +1,16 @@
 export default class Card extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y, cardData, inHands) {
+  constructor(scene, player, x, y, cardData, inHands, rotate = 0) {
     super(scene, x, y, cardData);
     scene.add.existing(this);
     console.log("card rendering: ", cardData);
     // Initialize the sprite
+    this.player = player;
     this.startingX = x;
     this.startingY = y;
     this.startingZ = parseInt(this.depth);
     this.setScale(0.2);
     this.setData("card", cardData);
+    this.angle = rotate;
     console.log("startingZ: ", this.startingZ);
 
     if (inHands) {
@@ -70,7 +72,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
               scene.socket.id
             );
             // TODO: CONTINUE THIS, optimize to only keep the top of the discard pile
-            scene.player1.removeCard(this);
+            this.player.removeCard(this);
             console.log(
               "dropZone cards before: ",
               scene.dropZone.getData("cards")
@@ -97,22 +99,5 @@ export default class Card extends Phaser.GameObjects.Sprite {
         });
       }
     });
-
-    // Drop event
-    // this.on("drop", (pointer, dropZone) => {
-    //   this.clearTint();
-    //   this.disableInteractive();
-    //   dropZone.data.values.cards.push(this);
-    //   scene.tweens.add({
-    //     targets: this,
-    //     x: this.scene.dropZone.x,
-    //     y: this.scene.dropZone.y,
-    //     ease: "Power1",
-    //     duration: 300,
-    //     onComplete: () => {},
-    //   });
-    //   scene.socket.emit("cardPlayed", this.getData("card"), scene.socket.id);
-    //   console.log("card played: ", this.getData("card"));
-    // });
   };
 }
