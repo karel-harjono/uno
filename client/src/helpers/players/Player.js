@@ -42,6 +42,7 @@ export default class Player {
         true
       );
     }
+    card.depth = this.cards.length;
     this.cards.push(card);
 
     // Tween the card from the draw pile to the next hand position
