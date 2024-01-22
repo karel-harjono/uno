@@ -2,8 +2,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
   constructor(scene, player, x, y, cardData, inHands, rotate = 0) {
     super(scene, x, y, cardData);
     scene.add.existing(this);
-    console.log("card rendering: ", cardData);
-    // Initialize the sprite
     this.player = player;
     this.startingX = x;
     this.startingY = y;
@@ -11,7 +9,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
     this.setScale(0.3);
     this.setData("card", cardData);
     this.angle = rotate;
-    console.log("startingZ: ", this.startingZ);
 
     if (inHands) {
       this.enableDragAndDrop(scene);
@@ -19,7 +16,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
   }
 
   enableDragAndDrop = (scene) => {
-    const hoverOffset = 20;
+    const hoverOffset = 40;
 
     this.setInteractive();
     scene.input.setDraggable(this);
@@ -47,7 +44,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
     this.on("dragstart", (pointer) => {
       this.setTint(0x777777);
       scene.children.bringToTop(this);
-      console.log("dragZ: ", this.depth);
     });
 
     this.on("drag", (pointer, dragX, dragY) => {

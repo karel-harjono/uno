@@ -7,7 +7,7 @@ import SocketHandler from "../helpers/SocketHandler";
 // import TableHandler from "../helpers/TableHandler";
 import UIHandler from "../helpers/UIHandler";
 
-import Constants from "../constants";
+import constants from "../constants";
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -18,12 +18,10 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     const basePath = "assets/cards/";
-    this.allPossibleCards = this._getAllPossibleCards();
-    for (let cardPath of this.allPossibleCards) {
+    for (let cardPath of constants.CARDS.ALL) {
       this.load.image(cardPath, `${basePath}${cardPath}.png`);
     }
-    console.log("this.allPossibleCards: ", this.allPossibleCards);
-    console.log("CARD IMAGES IS LOADED");
+    this.load.image("card-back", `${basePath}${"card-back"}.png`);
   }
 
   create() {
@@ -33,25 +31,7 @@ export default class Game extends Phaser.Scene {
     this.SocketHandler = new SocketHandler(this);
     this.UIHandler = new UIHandler(this);
     this.UIHandler.buildUI();
-
-    // this.InteractivityHandler = new InteractivityHandler(this);
   }
 
   update() {}
-
-  _getAllPossibleCards() {
-    const cardPaths = [];
-    for (let color of Constants.CARDS.COLORS) {
-      for (let special of Constants.CARDS.SPECIALS) {
-        cardPaths.push(`${color}-${special}`);
-      }
-      for (let number = 1; number <= 9; number++) {
-        cardPaths.push(`${color}-${number}`);
-      }
-    }
-    cardPaths.push("wild");
-    cardPaths.push("wild-plus-4");
-    cardPaths.push("card-back");
-    return cardPaths;
-  }
 }

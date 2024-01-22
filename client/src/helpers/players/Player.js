@@ -1,34 +1,47 @@
 import Card from "../cards/Card";
+import CardBack from "../cards/CardBack";
 import constants from "../../constants";
 
 export default class Player {
-  constructor(scene, x, y, rotate) {
+  constructor(
+    scene,
+    { x, y, rotate = 0, isEnemy = false, startingHand = [] } = {}
+  ) {
     this.scene = scene;
-    this.x = x || scene.cameras.main.centerX; // Default to centerX if x is not provided
-    this.y = y || scene.cameras.main.height - 200; // Default to a position near the bottom if y is not provided
-    this.rotate = rotate || 0;
+    this.x = x || scene.cameras.main.centerX;
+    this.y = y || scene.cameras.main.height - 200;
+    this.rotate = rotate;
+    this.isEnemy = isEnemy;
     this.cards = [];
-    this.cardSpacing = 30; // Spacing between cards
+    this.cardSpacing = isEnemy ? 10 : 30;
+    if (startingHand.length > 0) {
+      this.addCard(startingHand);
+    }
   }
 
   drawCard() {
     // Select a random card from all possible cards
     const randomCardData = Phaser.Utils.Array.GetRandom(constants.CARDS.ALL);
-    console.log("random card data: ", randomCardData);
+    console.log("random card is drawn: ", randomCardData);
 
     // Calculate the position of the draw pile
     const drawPileX = this.scene.sys.game.config.width / 2 + 200;
     const drawPileY = this.scene.sys.game.config.height / 2;
 
     // Create a new card at the draw pile position
-    const card = new Card(
-      this.scene,
-      this,
-      drawPileX,
-      drawPileY,
-      randomCardData,
-      true
-    );
+    let card;
+    if (this.isEnemy) {
+      card = new CardBack(this.scene, drawPileX, drawPileY, this.rotate);
+    } else {
+      card = new Card(
+        this.scene,
+        this,
+        drawPileX,
+        drawPileY,
+        randomCardData,
+        true
+      );
+    }
     this.cards.push(card);
 
     // Tween the card from the draw pile to the next hand position
@@ -55,19 +68,24 @@ export default class Player {
     } else {
       const cardX = this.calculateCardX(this.cards.length);
       const cardY = this.calculateCardY(this.cards.length); // Y position for the cards
-      const card = new Card(
-        this.scene,
-        this,
-        cardX,
-        cardY,
-        cardData,
-        true,
-        this.rotate
-      );
+      let card;
+      if (this.isEnemy) {
+        card = new CardBack(this.scene, cardX, cardY, this.rotate);
+      } else {
+        card = new Card(
+          this.scene,
+          this,
+          cardX,
+          cardY,
+          cardData,
+          true,
+          this.rotate
+        );
+      }
+
       this.cards.push(card);
       this.renderCards(); // Adjust positions of all cards
     }
-    console.log("player cards: ", this.cards);
   }
 
   removeCard(card) {
@@ -92,14 +110,13 @@ export default class Player {
         targets: card,
         x: targetX,
         y: targetY,
-        duration: 50,
+        duration: 200,
         ease: "Power1",
         onComplete: () => {
           card.setInteractive();
         },
       });
     });
-    console.log("render cards rendered");
   }
 
   calculateCardX(index) {
