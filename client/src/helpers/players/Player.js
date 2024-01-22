@@ -1,4 +1,5 @@
 import Card from "../cards/Card";
+import constants from "../../constants";
 
 export default class Player {
   constructor(scene, x, y, rotate) {
@@ -8,6 +9,42 @@ export default class Player {
     this.rotate = rotate || 0;
     this.cards = [];
     this.cardSpacing = 30; // Spacing between cards
+  }
+
+  drawCard() {
+    // Select a random card from all possible cards
+    const randomCardData = Phaser.Utils.Array.GetRandom(constants.CARDS.ALL);
+    console.log("random card data: ", randomCardData);
+
+    // Calculate the position of the draw pile
+    const drawPileX = this.scene.sys.game.config.width / 2 + 200;
+    const drawPileY = this.scene.sys.game.config.height / 2;
+
+    // Create a new card at the draw pile position
+    const card = new Card(
+      this.scene,
+      this,
+      drawPileX,
+      drawPileY,
+      randomCardData,
+      true
+    );
+    this.cards.push(card);
+
+    // Tween the card from the draw pile to the next hand position
+    const nextHandPositionX = this.calculateCardX(this.cards.length - 1);
+    card.disableInteractive();
+    this.scene.tweens.add({
+      targets: card,
+      x: nextHandPositionX,
+      y: this.y, // The y position of the player's hand
+      ease: "Power1",
+      duration: 300,
+      onComplete: () => {
+        this.renderCards(); // Adjust all card positions after the new card is added
+        card.setInteractive();
+      },
+    });
   }
 
   addCard(cardData) {
@@ -47,17 +84,22 @@ export default class Player {
       const targetX = this.calculateCardX(index);
       const targetY = this.calculateCardY(index);
       card.startingX = targetX; // Update the starting X position of the card
+      card.startingY = targetY;
+      card.depth = index;
+      card.startingZ = card.depth;
+      card.disableInteractive();
       this.scene.tweens.add({
         targets: card,
         x: targetX,
         y: targetY,
-        duration: 300,
+        duration: 50,
         ease: "Power1",
+        onComplete: () => {
+          card.setInteractive();
+        },
       });
-      card.depth = this.cards.length - index + 1;
-      card.startingZ = card.depth;
-      console.log("render cards: ", targetX);
     });
+    console.log("render cards rendered");
   }
 
   calculateCardX(index) {

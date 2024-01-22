@@ -18,6 +18,12 @@ export default class DrawPile extends Phaser.GameObjects.Image {
     }
 
     this.setInteractive(); // DELETE THIS LATER
+
+    this.on("pointerdown", () => {
+      console.log("draw pile clicked");
+      scene.player1.drawCard();
+      // scene.socket.emit("drawCard");
+    });
     scene.add.existing(this);
   }
 }

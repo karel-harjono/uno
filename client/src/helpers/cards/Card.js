@@ -8,7 +8,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     this.startingX = x;
     this.startingY = y;
     this.startingZ = parseInt(this.depth);
-    this.setScale(0.2);
+    this.setScale(0.3);
     this.setData("card", cardData);
     this.angle = rotate;
     console.log("startingZ: ", this.startingZ);
@@ -63,6 +63,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
           targets: this,
           x: this.scene.dropZone.x,
           y: this.scene.dropZone.y,
+          scale: 0.2,
           ease: "Power1",
           duration: 100,
           onComplete: () => {

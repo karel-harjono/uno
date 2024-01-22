@@ -57,7 +57,6 @@ export default {
       "yellow-9",
       "wild",
       "wild-plus-4",
-      "card-back",
     ],
   },
   CARD_BACK_PATH: "assets/images/cards/card-back.png",

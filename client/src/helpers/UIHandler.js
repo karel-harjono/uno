@@ -21,7 +21,7 @@ export default class UIHandler {
     };
 
     this.buildDrawCardPileSprite = () => {
-      new DrawPile(
+      scene.drawPile = new DrawPile(
         scene,
         this.DRAW_PILE_LOCATION[0],
         this.DRAW_PILE_LOCATION[1]
@@ -49,19 +49,6 @@ export default class UIHandler {
     };
 
     this.buildUI = () => {
-      // this.buildGameText();
-      this.buildDrawCardPileSprite();
-      this.buildCardPileSprite();
-      this.buildZone();
-      // new DeckHandler(scene).drawCard();
-      // this.buildPlayerAreas();
-
-      // new HandUI(scene).render(
-      //   scene.sys.game.config.width / 2,
-      //   scene.sys.game.config.height - 100,
-      //   0
-      // );
-
       scene.player1 = new Player(scene);
       scene.player1.addCard(["red-1", "red-2", "red-3", "red-4", "red-5"]);
       scene.enemy1 = new Enemy(
@@ -85,6 +72,19 @@ export default class UIHandler {
         270
       );
       scene.enemy3.addCard(["blue-1", "blue-2", "blue-3", "blue-4", "blue-5"]);
+
+      // this.buildGameText();
+      this.buildDrawCardPileSprite();
+      this.buildCardPileSprite();
+      this.buildZone();
+      // new DeckHandler(scene).drawCard();
+      // this.buildPlayerAreas();
+
+      // new HandUI(scene).render(
+      //   scene.sys.game.config.width / 2,
+      //   scene.sys.game.config.height - 100,
+      //   0
+      // );
     };
   }
 }
