@@ -1,1 +1,1 @@
-export default Util = () => {};
+export const drawCard = (numOfCards) => {};

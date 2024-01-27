@@ -3,12 +3,9 @@ import CardBack from "./cards/CardBack";
 
 export default class DrawPile extends Phaser.GameObjects.Image {
   constructor(scene, x, y) {
-    super(
-      scene,
-      scene.sys.game.config.width / 2 + 200,
-      scene.sys.game.config.height / 2,
-      "card-back"
-    );
+    super(scene, x, y, "card-back");
+    this.x = x;
+    this.y = y;
     this.setScale(0.2);
 
     if (scene.socket.id === scene.currentPlayer) {

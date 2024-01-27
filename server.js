@@ -14,44 +14,72 @@ http.listen(3000, () => {
   console.log("game server is listening on localhost:3000");
 });
 
+const rooms = {};
+
 io.on("connection", (socket) => {
   console.log("a user connected: ", socket.id);
-
-  // for testing join room1 by default
-  const roomName = "room1";
-  socket.join(roomName);
-  console.log(`user ${socket.id} joined room ${roomName}`);
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
 
-  const rooms = {
-    room1: {
+  socket.on("createRoom", (roomName, playerName, cb) => {
+    if (rooms[roomName]) {
+      cb(constants.RESPONSE_STATUS.FAILURE);
+      return;
+    }
+    socket.join(roomName);
+    rooms[roomName] = {
       players: {
-        player1: {
+        [playerName]: {
           id: socket.id,
-          name: "player1",
-          cards: [],
-        },
-        player2: {
-          id: socket.id,
-          name: "player2",
+          name: playerName,
           cards: [],
         },
       },
       turnCount: 0,
-    },
-  };
+      roomMaster: socket.id,
+    };
+    cb(constants.RESPONSE_STATUS.SUCCESS);
+    console.log(`User ${socket.id}:${playerName} created room ${roomName}`);
+    console.log("Rooms: ", rooms);
+  });
 
-  socket.on("joinRoom", (roomName) => {
-    socket.join(roomName);
-    if (rooms[roomName]) {
-      rooms[roomName].push(socket.id);
-    } else {
-      rooms[roomName] = [socket.id];
+  socket.on("joinRoom", (roomName, playerName, cb) => {
+    if (!rooms[roomName]) {
+      cb(constants.RESPONSE_STATUS.FAILURE);
+      return;
     }
     io.to(roomName).emit("playerJoined", socket.id);
+    socket.join(roomName);
+    rooms[roomName].players[playerName] = {
+      id: socket.id,
+      name: playerName,
+      cards: [],
+    };
+    cb("joinRoom success");
+    console.log(`User ${socket.id}:${playerName} joined room ${roomName}`);
+    console.log("Rooms: ", rooms);
+  });
+
+  socket.on("startGameAnnounce", (roomName) => {
+    console.log("Start game in room: ", roomName);
+    const room = rooms[roomName];
+    if (!room) {
+      console.error("Room not found:", roomName);
+      return;
+    }
+
+    // Dealing cards to each player in the room
+    Object.keys(room.players).forEach((playerName) => {
+      const player = room.players[playerName];
+      const playerCards = shuffle.pick(constants.CARDS, { picks: 5 });
+      player.cards = playerCards;
+      console.log(player);
+
+      // Emitting 'startGame' event to each player with their cards
+      io.to(player.id).emit("startGame", playerCards);
+    });
   });
 
   socket.on("leaveRoom", (roomName) => {
@@ -62,6 +90,8 @@ io.on("connection", (socket) => {
     }
     io.to(roomName).emit("playerLeft", roomName);
   });
+
+  socket.on("startGame", (roomName) => {});
 
   socket.on("drawCard", (socketId) => {
     const randomCard = shuffle.pick(constants.CARDS);

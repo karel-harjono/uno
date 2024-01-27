@@ -1,4 +1,8 @@
 module.exports = {
+  RESPONSE_STATUS: {
+    SUCCESS: "success",
+    FAILURE: "failure",
+  },
   CARDS: [
     "red-skip",
     "red-reverse",
@@ -50,6 +54,5 @@ module.exports = {
     "yellow-9",
     "wild",
     "wild-plus-4",
-    "card-back",
   ],
 };

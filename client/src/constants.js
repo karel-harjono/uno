@@ -2,6 +2,15 @@ export default {
   API_URL: "http://localhost:3000/api",
   SOCKET_URL: "http://localhost:3000",
   IMAGES_PATH: "/assets/images",
+  GAME_STATUS: {
+    WAITING: "waiting",
+    STARTED: "started",
+    ENDED: "ended",
+  },
+  RESPONSE_STATUS: {
+    SUCCESS: "success",
+    FAILURE: "failure",
+  },
   CARDS: {
     COLORS: ["red", "blue", "green", "yellow"],
     SPECIALS: ["skip", "reverse", "plus-2"],

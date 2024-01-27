@@ -1,22 +1,50 @@
 import io from "socket.io-client";
+import constants from "../constants";
 
 export default class SocketHandler {
-  constructor(scene) {
-    scene.socket = io("http://localhost:3000");
+  static instance = null;
 
-    scene.socket.on("connect", () => {
-      console.log("connected");
-      scene.socket.emit("joinGame", scene.socket.id);
+  constructor(scene) {
+    this.scene = scene;
+    if (SocketHandler.instance) {
+      scene.socket = SocketHandler.instance;
+      return;
+    }
+
+    scene.socket = io("http://localhost:3000");
+    this.setupSocketListeners(scene.socket);
+    SocketHandler.instance = scene.socket;
+  }
+
+  setupSocketListeners(socket) {
+    socket.on("connect", () => {
+      console.log("connected to game server");
+      socket.emit("joinGame", socket.id);
     });
 
-    scene.socket.on("drawCard", (cards) => {
+    socket.on("drawCard", (cards) => {
       console.log("drawCard :", cards);
     });
 
-    scene.socket.on("firstTurn", () => {});
+    socket.on("playerJoined", (playerId) => {
+      console.log("playerJoined :", playerId);
+    });
 
-    scene.socket.on("disconnect", () => {
+    socket.on("startGame", (playerCards) => {
+      console.log("startGame :", playerCards);
+      console.log(this.scene);
+      this.scene.GameHandler.dealCards(playerCards);
+    });
+
+    socket.on("firstTurn", () => {});
+
+    socket.on("disconnect", () => {
       console.log("disconnected");
     });
+  }
+
+  startGame(roomName) {
+    console.log("starting game");
+    SocketHandler.instance.emit("startGame", roomName);
   }
 }

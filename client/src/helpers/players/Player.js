@@ -19,46 +19,44 @@ export default class Player {
     }
   }
 
-  drawCard() {
-    // Select a random card from all possible cards
-    const randomCardData = Phaser.Utils.Array.GetRandom(constants.CARDS.ALL);
-    console.log("random card is drawn: ", randomCardData);
-
-    // Calculate the position of the draw pile
-    const drawPileX = this.scene.sys.game.config.width / 2 + 200;
-    const drawPileY = this.scene.sys.game.config.height / 2;
+  drawCard(cards) {
+    if (typeof cards === "undefined") {
+      cards = [Phaser.Utils.Array.GetRandom(constants.CARDS.ALL)];
+    }
 
     // Create a new card at the draw pile position
-    let card;
-    if (this.isEnemy) {
-      card = new CardBack(this.scene, drawPileX, drawPileY, this.rotate);
-    } else {
-      card = new Card(
-        this.scene,
-        this,
-        drawPileX,
-        drawPileY,
-        randomCardData,
-        true
-      );
-    }
-    card.depth = this.cards.length;
-    this.cards.push(card);
+    for (let i = 0; i < cards.length; i++) {
+      let card;
+      if (this.isEnemy) {
+        card = new CardBack(this.scene, drawPileX, drawPileY, this.rotate);
+      } else {
+        card = new Card(
+          this.scene,
+          this,
+          this.scene.drawPile.x,
+          this.scene.drawPile.y,
+          cards[i],
+          true
+        );
+      }
+      card.depth = this.cards.length;
+      this.cards.push(card);
 
-    // Tween the card from the draw pile to the next hand position
-    const nextHandPositionX = this.calculateCardX(this.cards.length - 1);
-    card.disableInteractive();
-    this.scene.tweens.add({
-      targets: card,
-      x: nextHandPositionX,
-      y: this.y, // The y position of the player's hand
-      ease: "Power1",
-      duration: 300,
-      onComplete: () => {
-        this.renderCards(); // Adjust all card positions after the new card is added
-        card.setInteractive();
-      },
-    });
+      // Tween the card from the draw pile to the next hand position
+      const nextHandPositionX = this.calculateCardX(this.cards.length - 1);
+      card.disableInteractive();
+      this.scene.tweens.add({
+        targets: card,
+        x: nextHandPositionX,
+        y: this.y, // The y position of the player's hand
+        ease: "Power1",
+        duration: 300,
+        onComplete: () => {
+          this.renderCards(); // Adjust all card positions after the new card is added
+          card.setInteractive();
+        },
+      });
+    }
   }
 
   addCard(cardData) {
