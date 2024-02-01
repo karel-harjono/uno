@@ -10,6 +10,7 @@ export default {
   RESPONSE_STATUS: {
     SUCCESS: "success",
     FAILURE: "failure",
+    NOT_FOUND: "not found",
   },
   CARDS: {
     COLORS: ["red", "blue", "green", "yellow"],

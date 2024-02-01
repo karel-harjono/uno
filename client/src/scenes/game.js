@@ -24,7 +24,10 @@ export default class Game extends Phaser.Scene {
     this.GameHandler = new GameHandler(this);
     this.UIHandler = new UIHandler(this);
     this.player1 = new Player(this);
-    this.GameHandler.createRoom(data.roomName, data.username);
+
+    this.roomNameFromURL = new URLSearchParams(window.location.search).get(
+      "roomName"
+    );
   }
 
   preload() {
@@ -36,17 +39,7 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
-    this.UIHandler.buildUI();
-
-    // this.GameHandler.joinRoom(this.roomName);
-
-    const startButton = this.add.text(100, 100, "Start Game!", {
-      fill: "#0f0",
-    });
-    startButton.setInteractive();
-    startButton.on("pointerdown", () => {
-      this.GameHandler.roomMasterAnnounceStart();
-    });
+    this.UIHandler.createLoginForm();
   }
 
   update() {}

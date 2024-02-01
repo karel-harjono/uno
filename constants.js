@@ -2,6 +2,7 @@ module.exports = {
   RESPONSE_STATUS: {
     SUCCESS: "success",
     FAILURE: "failure",
+    NOT_FOUND: "not found",
   },
   CARDS: [
     "red-skip",

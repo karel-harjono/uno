@@ -47,7 +47,10 @@ io.on("connection", (socket) => {
 
   socket.on("joinRoom", (roomName, playerName, cb) => {
     if (!rooms[roomName]) {
-      cb(constants.RESPONSE_STATUS.FAILURE);
+      console.log(
+        `player ${playerName} trying to join non-existent room ${roomName}`
+      );
+      cb(constants.RESPONSE_STATUS.NOT_FOUND);
       return;
     }
     io.to(roomName).emit("playerJoined", socket.id);
