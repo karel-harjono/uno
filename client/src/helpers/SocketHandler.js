@@ -12,7 +12,7 @@ export default class SocketHandler {
     }
 
     // scene.socket = io("http://143.198.33.208:3000");
-    scene.socket = io("https://143.198.33.208:443");
+    scene.socket = io("https://bebys-backend-service.rest:443");
     this.setupSocketListeners(scene.socket);
     SocketHandler.instance = scene.socket;
   }
