@@ -11,7 +11,7 @@ export default class SocketHandler {
       return;
     }
 
-    scene.socket = io("http://localhost:3000");
+    scene.socket = io("http://143.198.33.208:3000");
     this.setupSocketListeners(scene.socket);
     SocketHandler.instance = scene.socket;
   }
