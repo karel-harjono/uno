@@ -23,6 +23,10 @@ export default class Player {
     if (typeof cards === "undefined") {
       cards = [Phaser.Utils.Array.GetRandom(constants.CARDS.ALL)];
     }
+    // if cards is an integer, draw that many "back of card" cards
+    if (typeof cards === "number") {
+      cards = new Array(cards).fill(constants.CARDS.BACK);
+    }
 
     // Create a new card at the draw pile position
     for (let i = 0; i < cards.length; i++) {

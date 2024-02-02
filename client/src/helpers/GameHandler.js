@@ -1,5 +1,10 @@
 import constants from "../constants";
 
+// create a constant for the player positions(coordinate) depending on the number of players in the game
+const playerPositions = {
+  2: [],
+};
+
 export default class GameHandler {
   constructor(scene) {
     this.scene = scene;
@@ -9,8 +14,7 @@ export default class GameHandler {
       gameStatus: undefined,
       turnCount: 0,
       myHand: [],
-      playerIds: undefined,
-      opponentHandCounts: undefined,
+      otherPlayers: {},
       discardPile: undefined,
     };
 
@@ -29,16 +33,6 @@ export default class GameHandler {
   roomMasterAnnounceStart = () => {
     console.log("roomMasterAnnounceStart");
     this.scene.socket.emit("startGameAnnounce", this.scene.gameState.roomName);
-  };
-
-  startGame = () => {
-    if (typeof this.scene.gameState.gameStatus === "undefined") return;
-    this.scene.gameState.gameStatus = "started";
-    this.scene.socket.emit("startGame", this.scene.gameState.roomName);
-    console.log(
-      "Starting game, emitting startGame with roomName: ",
-      this.scene.gameState.roomName
-    );
   };
 
   createRoom = (roomName, username) => {
@@ -82,7 +76,21 @@ export default class GameHandler {
       });
     });
   };
+
+  addOtherPlayer = (playerId) => {
+    this.scene.gameState.otherPlayers[playerId] = {
+      id: playerId,
+      cardCount: undefined,
+      turnId: undefined,
+    };
+  };
+
   dealCards = (cards) => {
+    const cardCount = cards.length;
+    this.scene.gameState.myHand = cards;
     this.scene.player1.drawCard(cards);
+    Object.keys(this.scene.gameState.otherPlayers).forEach((player) => {
+      this.scene.gameState.otherPlayers[player].drawCard(player.cardCount);
+    });
   };
 }

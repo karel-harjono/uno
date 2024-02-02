@@ -28,7 +28,9 @@ export default class SocketHandler {
     });
 
     socket.on("playerJoined", (playerId) => {
+      if (playerId === socket.id) return;
       console.log("playerJoined :", playerId);
+      this.scene.GameHandler.addOtherPlayer(playerId);
     });
 
     socket.on("startGame", (playerCards) => {
